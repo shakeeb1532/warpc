@@ -1,3 +1,3 @@
 all:
-	gcc -o warpc main.c compressor.c decompressor.c
+	gcc -o warpc main.c compressor.c decompressor.c bitstream.c
 
