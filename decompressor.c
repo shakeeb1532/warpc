@@ -8,11 +8,22 @@ void decompress(const char *input_path, const char *output_path) {
         return;
     }
 
-    int ch;
-    while ((ch = fgetc(in)) != EOF) {
-        fputc(ch ^ 0xAA, out);  // Dummy XOR decompression
+    BitReader br;
+    init_bitreader(&br, in);
+
+    int bit, byte = 0, count = 0;
+    while ((bit = read_bit(&br)) != -1) {
+        bit ^= 1;  // Invert back
+        byte = (byte << 1) | bit;
+        count++;
+        if (count == 8) {
+            fputc(byte, out);
+            byte = 0;
+            count = 0;
+        }
     }
 
     fclose(in);
     fclose(out);
 }
+

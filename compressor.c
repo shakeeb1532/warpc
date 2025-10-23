@@ -8,11 +8,20 @@ void compress(const char *input_path, const char *output_path) {
         return;
     }
 
+    BitWriter bw;
+    init_bitwriter(&bw, out);
+
     int ch;
     while ((ch = fgetc(in)) != EOF) {
-        fputc(ch ^ 0xAA, out);  // Dummy XOR compression
+        for (int i = 7; i >= 0; i--) {
+            int bit = (ch >> i) & 1;
+            bit ^= 1;  // Simple bit-level XOR (invert)
+            write_bit(&bw, bit);
+        }
     }
 
+    flush_bits(&bw);
     fclose(in);
     fclose(out);
 }
+
